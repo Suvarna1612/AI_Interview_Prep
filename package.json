@@ -1,0 +1,17 @@
+{
+  "name": "interview-prep-app",
+  "version": "1.0.0",
+  "description": "AI-powered interview preparation application",
+  "scripts": {
+    "install-all": "cd backend && npm install && cd ../frontend-new && npm install",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend-new && npm run dev\"",
+    "build": "cd frontend-new && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "keywords": ["interview", "ai", "react", "node", "mongodb"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
