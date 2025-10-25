@@ -77,3 +77,13 @@ jspm_packages/
 
 # DynamoDB Local files
 .dynamodb/
+
+
+echo "node_modules/
+.env
+.env.local
+.env.production
+*.log
+.DS_Store
+dist/
+build/" > .gitignore
