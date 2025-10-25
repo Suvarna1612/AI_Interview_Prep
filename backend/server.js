@@ -13,10 +13,20 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+// Allow all CORS requests
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL || 'https://interview-prep-app.vercel.app'] 
-    : ['http://localhost:3000', 'http://localhost:5173'],
+  origin: true,
   credentials: true
 }));
 
