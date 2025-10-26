@@ -91,25 +91,25 @@ const Upload = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-6 sm:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             Upload Your Documents
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
             Upload your resume and job description to start your AI-powered interview practice
           </p>
         </div>
 
         {/* Upload Status */}
-        <div className="mb-8 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+        <div className="mb-6 sm:mb-8 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+            <div className="flex items-center space-x-4 sm:space-x-6">
               <div className={`flex items-center space-x-2 ${hasResume ? 'text-green-600' : 'text-gray-400'}`}>
                 <div className={`w-5 h-5 rounded-full flex items-center justify-center ${hasResume ? 'bg-green-100' : 'bg-gray-100'}`}>
                   {hasResume ? (
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   ) : (
@@ -122,7 +122,7 @@ const Upload = () => {
               <div className={`flex items-center space-x-2 ${hasJobDescription ? 'text-green-600' : 'text-gray-400'}`}>
                 <div className={`w-5 h-5 rounded-full flex items-center justify-center ${hasJobDescription ? 'bg-green-100' : 'bg-gray-100'}`}>
                   {hasJobDescription ? (
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   ) : (
@@ -136,7 +136,8 @@ const Upload = () => {
             {canStartInterview && (
               <Link 
                 to="/chat" 
-                className="btn-primary"
+                className="btn-primary w-full sm:w-auto text-center touch-manipulation"
+                aria-label="Start interview practice"
               >
                 Start Interview
               </Link>
@@ -145,9 +146,9 @@ const Upload = () => {
         </div>
 
         {/* Upload Areas */}
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="card">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
               Resume
             </h2>
             <FileUpload
@@ -157,7 +158,7 @@ const Upload = () => {
           </div>
 
           <div className="card">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
               Job Description
             </h2>
             <FileUpload
@@ -170,33 +171,38 @@ const Upload = () => {
         {/* Document List */}
         {documents.length > 0 && (
           <div className="card">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
               Uploaded Documents
             </h2>
             <div className="space-y-3">
               {documents.map((doc) => (
-                <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                <div key={doc.id} className="flex items-start sm:items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-start sm:items-center space-x-3 min-w-0 flex-1">
+                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-gray-900 truncate">
                         {doc.originalName}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {doc.type === 'resume' ? 'Resume' : 'Job Description'} • {formatFileSize(doc.fileSize)} • {formatDate(doc.createdAt)}
+                      <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                        <span className="block sm:inline">{doc.type === 'resume' ? 'Resume' : 'Job Description'}</span>
+                        <span className="hidden sm:inline"> • </span>
+                        <span className="block sm:inline">{formatFileSize(doc.fileSize)}</span>
+                        <span className="hidden sm:inline"> • </span>
+                        <span className="block sm:inline">{formatDate(doc.createdAt)}</span>
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => handleDelete(doc.id)}
-                    className="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                    className="text-red-600 hover:text-red-800 active:text-red-900 p-2 rounded-lg hover:bg-red-50 active:bg-red-100 transition-colors touch-manipulation ml-2 flex-shrink-0"
                     title="Delete document"
+                    aria-label={`Delete ${doc.originalName}`}
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>

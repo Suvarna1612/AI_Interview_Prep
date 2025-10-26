@@ -108,6 +108,15 @@ const Chat = () => {
     }
   };
 
+  const handleInputChange = (e) => {
+    setInputMessage(e.target.value);
+    // Auto-resize textarea on mobile
+    if (window.innerWidth <= 640) {
+      e.target.style.height = 'auto';
+      e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+    }
+  };
+
   const openCitationModal = (citation) => {
     setSelectedCitation(citation);
     setShowCitationModal(true);
@@ -140,48 +149,50 @@ const Chat = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
+      <div className="bg-white border-b border-gray-200 px-3 sm:px-4 py-3 sm:py-4 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
               AI Interview Simulation
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">
               Practice your interview skills with personalized questions
             </p>
           </div>
           <button
             onClick={() => navigate('/upload')}
-            className="btn-secondary text-sm"
+            className="btn-secondary text-xs sm:text-sm px-3 sm:px-4 py-2 ml-3 whitespace-nowrap touch-manipulation"
+            aria-label="Upload new documents"
           >
-            Upload New Documents
+            <span className="hidden sm:inline">Upload New Documents</span>
+            <span className="sm:hidden">Upload</span>
           </button>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-6 pb-safe">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
           {messages.map((message, index) => (
             <div
               key={index}
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-3xl rounded-lg px-4 py-3 ${
+                className={`max-w-[85%] sm:max-w-3xl rounded-lg px-3 sm:px-4 py-3 ${
                   message.role === 'user'
                     ? 'bg-primary-600 text-white'
                     : 'bg-white border border-gray-200 shadow-sm'
                 }`}
               >
-                <div className="whitespace-pre-wrap">{message.content}</div>
+                <div className="whitespace-pre-wrap text-sm sm:text-base leading-relaxed">{message.content}</div>
                 
                 {/* Score and Citations for AI messages */}
                 {message.role === 'assistant' && (message.score || message.citations) && (
                   <div className="mt-3 pt-3 border-t border-gray-200">
                     {message.score && (
                       <div className="flex items-center space-x-2 mb-2">
-                        <span className="text-sm text-gray-600">Score:</span>
+                        <span className="text-xs sm:text-sm text-gray-600">Score:</span>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(message.score)}`}>
                           {message.score}/10
                         </span>
@@ -190,13 +201,14 @@ const Chat = () => {
                     
                     {message.citations && message.citations.length > 0 && (
                       <div className="space-y-1">
-                        <span className="text-sm text-gray-600">References:</span>
+                        <span className="text-xs sm:text-sm text-gray-600">References:</span>
                         <div className="flex flex-wrap gap-2">
                           {message.citations.map((citation, citationIndex) => (
                             <button
                               key={citationIndex}
                               onClick={() => openCitationModal(citation)}
-                              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded transition-colors"
+                              className="text-xs bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 px-2 py-1 rounded transition-colors touch-manipulation min-h-[32px] flex items-center"
+                              aria-label={`View reference from ${citation.documentType === 'resume' ? 'Resume' : 'Job Description'}`}
                             >
                               {citation.documentType === 'resume' ? 'Resume' : 'Job Description'}
                             </button>
@@ -216,10 +228,10 @@ const Chat = () => {
           
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm">
+              <div className="bg-white border border-gray-200 rounded-lg px-3 sm:px-4 py-3 shadow-sm max-w-[85%] sm:max-w-3xl">
                 <div className="flex items-center space-x-2">
                   <div className="loading-spinner"></div>
-                  <span className="text-gray-600">AI is thinking...</span>
+                  <span className="text-gray-600 text-sm sm:text-base">AI is thinking...</span>
                 </div>
               </div>
             </div>
@@ -230,35 +242,37 @@ const Chat = () => {
       </div>
 
       {/* Input */}
-      <div className="bg-white border-t border-gray-200 px-4 py-4">
+      <div className="bg-white border-t border-gray-200 px-3 sm:px-4 py-3 sm:py-4 pb-safe">
         <div className="max-w-4xl mx-auto">
-          <div className="flex space-x-4">
+          <div className="flex space-x-2 sm:space-x-4">
             <div className="flex-1">
               <textarea
                 value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
+                onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your response here..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none text-sm sm:text-base max-h-32 sm:max-h-none"
                 rows="3"
                 disabled={loading}
+                aria-label="Type your interview response"
               />
             </div>
             <button
               onClick={sendMessage}
               disabled={!inputMessage.trim() || loading}
-              className="btn-primary px-6 py-3 h-fit"
+              className="btn-primary px-4 sm:px-6 py-3 h-fit min-w-[48px] min-h-[48px] flex items-center justify-center touch-manipulation"
+              aria-label="Send message"
             >
               {loading ? (
-                <div className="loading-spinner"></div>
+                <div className="loading-spinner w-5 h-5"></div>
               ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               )}
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-gray-500 mt-2 hidden sm:block">
             Press Enter to send, Shift+Enter for new line
           </p>
         </div>
@@ -267,23 +281,24 @@ const Chat = () => {
       {/* Citation Modal */}
       {showCitationModal && selectedCitation && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-96 overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto mx-4">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-start justify-between mb-4">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 pr-4">
                   Reference from {selectedCitation.documentType === 'resume' ? 'Resume' : 'Job Description'}
                 </h3>
                 <button
                   onClick={() => setShowCitationModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 p-1 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-label="Close modal"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-gray-700">{selectedCitation.snippet}</p>
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                <p className="text-gray-700 text-sm sm:text-base leading-relaxed">{selectedCitation.snippet}</p>
               </div>
             </div>
           </div>

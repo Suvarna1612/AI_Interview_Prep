@@ -77,29 +77,34 @@ const FileUpload = ({ onUpload, type, accept = '.pdf', maxSize = 2097152 }) => {
       <div
         {...getRootProps()}
         className={`
-          border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200
+          border-2 border-dashed rounded-lg p-6 sm:p-8 text-center cursor-pointer transition-all duration-200 touch-manipulation
           ${isDragActive 
             ? 'border-primary-400 bg-primary-50' 
             : 'border-gray-300 hover:border-primary-400 hover:bg-gray-50'
           }
           ${uploading ? 'cursor-not-allowed opacity-50' : ''}
         `}
+        role="button"
+        tabIndex={0}
+        aria-label={`Upload ${getTypeLabel()}`}
       >
         <input {...getInputProps()} />
         
-        <div className="space-y-4">
-          <div className="mx-auto w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-            <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="space-y-3 sm:space-y-4">
+          <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-full flex items-center justify-center">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
           </div>
           
           <div>
-            <p className="text-lg font-medium text-gray-900">
+            <p className="text-base sm:text-lg font-medium text-gray-900">
               {isDragActive ? `Drop your ${getTypeLabel().toLowerCase()} here` : `Upload ${getTypeLabel()}`}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
-              Drag and drop your PDF file here, or click to browse
+            <p className="text-sm text-gray-500 mt-1 px-2">
+              <span className="hidden sm:inline">Drag and drop your PDF file here, or </span>
+              <span className="sm:hidden">Tap to select your PDF file or </span>
+              <span className="font-medium">click to browse</span>
             </p>
             <p className="text-xs text-gray-400 mt-2">
               PDF files only, max 2MB
