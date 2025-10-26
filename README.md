@@ -28,7 +28,7 @@ A modern, AI-powered interview preparation platform that helps job seekers pract
 - **JWT** - JSON Web Tokens for authentication
 - **Google Gemini AI** - Advanced AI for question generation and feedback
 - **Multer** - File upload handling
-- **Helmet** - Security middleware
+
 
 ## 📋 Prerequisites
 
@@ -202,46 +202,6 @@ npm run preview  # To test production build locally
 - Loading states and error handling
 - Toast notifications for user feedback
 - Modern, clean design with consistent styling
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 Code Quality
-
-- ESLint configuration for code consistency
-- Error boundaries for React components
-- Comprehensive error handling
-- Input validation on both client and server
-- Modular code structure with separation of concerns
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **MongoDB Connection Error**:
-   - Ensure MongoDB is running
-   - Check connection string in `.env`
-
-2. **Gemini API Error**:
-   - Verify API key is correct
-   - Check API quota and billing
-
-3. **File Upload Issues**:
-   - Ensure uploads directory exists
-   - Check file size limits (2MB max)
-
-4. **CORS Errors**:
-   - Verify frontend URL in backend CORS config
-   - Check environment variables
-
-## 📄 License
-
-This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
