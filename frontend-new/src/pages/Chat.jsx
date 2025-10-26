@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import { chatAPI } from '../services/api';
+import { formatTime, getScoreInfo, scrollToElement, isMobile } from '../utils/helpers';
+import { CHAT, ERROR_MESSAGES } from '../utils/constants';
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -14,13 +16,15 @@ const Chat = () => {
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const scrollToBottom = useCallback(() => {
+    setTimeout(() => {
+      scrollToElement(messagesEndRef.current);
+    }, CHAT.AUTO_SCROLL_DELAY);
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, scrollToBottom]);
 
   useEffect(() => {
     initializeChat();
@@ -28,7 +32,7 @@ const Chat = () => {
 
   const initializeChat = async () => {
     try {
-      const response = await axios.post('/chat/start');
+      const response = await chatAPI.start();
       setSessionId(response.data.sessionId);
       setMessages([
         {
@@ -38,11 +42,11 @@ const Chat = () => {
         }
       ]);
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to start interview';
+      const message = error.message || ERROR_MESSAGES.CHAT_INIT_FAILED;
       toast.error(message);
       
-      if (error.response?.status === 400) {
-        // User doesn't have required documents
+      // Redirect to upload if documents are missing
+      if (message.includes('required')) {
         navigate('/upload');
       }
     } finally {
@@ -51,11 +55,18 @@ const Chat = () => {
   };
 
   const sendMessage = async () => {
-    if (!inputMessage.trim() || loading) return;
+    const trimmedMessage = inputMessage.trim();
+    
+    if (!trimmedMessage || loading) return;
+    
+    if (trimmedMessage.length > CHAT.MAX_MESSAGE_LENGTH) {
+      toast.error(`Message too long. Maximum ${CHAT.MAX_MESSAGE_LENGTH} characters allowed.`);
+      return;
+    }
 
     const userMessage = {
       role: 'user',
-      content: inputMessage,
+      content: trimmedMessage,
       timestamp: new Date()
     };
 
@@ -64,8 +75,8 @@ const Chat = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('/chat/query', {
-        message: inputMessage,
+      const response = await chatAPI.query({
+        message: trimmedMessage,
         sessionId
       });
 
@@ -80,7 +91,7 @@ const Chat = () => {
 
       setMessages(prev => [...prev, assistantMessage]);
 
-      // If there's a follow-up message, add it as a separate message
+      // Add follow-up message if present
       if (response.data.showFollowUp && response.data.followUpMessage) {
         const followUpMessage = {
           role: 'assistant',
@@ -88,14 +99,12 @@ const Chat = () => {
           timestamp: new Date()
         };
         
-        // Add follow-up message after a short delay for better UX
         setTimeout(() => {
           setMessages(prev => [...prev, followUpMessage]);
-        }, 1000);
+        }, CHAT.TYPING_INDICATOR_DELAY);
       }
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to send message';
-      toast.error(message);
+      toast.error(error.message || ERROR_MESSAGES.GENERIC_ERROR);
     } finally {
       setLoading(false);
     }
@@ -108,32 +117,25 @@ const Chat = () => {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     setInputMessage(e.target.value);
+    
     // Auto-resize textarea on mobile
-    if (window.innerWidth <= 640) {
+    if (isMobile()) {
       e.target.style.height = 'auto';
       e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
     }
-  };
+  }, []);
 
-  const openCitationModal = (citation) => {
+  const openCitationModal = useCallback((citation) => {
     setSelectedCitation(citation);
     setShowCitationModal(true);
-  };
+  }, []);
 
-  const formatTime = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getScoreColor = (score) => {
-    if (score >= 8) return 'text-green-600 bg-green-100';
-    if (score >= 6) return 'text-yellow-600 bg-yellow-100';
-    return 'text-red-600 bg-red-100';
-  };
+  const closeCitationModal = useCallback(() => {
+    setShowCitationModal(false);
+    setSelectedCitation(null);
+  }, []);
 
   if (initializing) {
     return (
@@ -193,7 +195,7 @@ const Chat = () => {
                     {message.score && (
                       <div className="flex items-center space-x-2 mb-2">
                         <span className="text-xs sm:text-sm text-gray-600">Score:</span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(message.score)}`}>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getScoreInfo(message.score).color}`}>
                           {message.score}/10
                         </span>
                       </div>
@@ -288,7 +290,7 @@ const Chat = () => {
                   Reference from {selectedCitation.documentType === 'resume' ? 'Resume' : 'Job Description'}
                 </h3>
                 <button
-                  onClick={() => setShowCitationModal(false)}
+                  onClick={closeCitationModal}
                   className="text-gray-400 hover:text-gray-600 p-1 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
                   aria-label="Close modal"
                 >
